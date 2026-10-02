@@ -191,17 +191,14 @@ class UaePassWebViewDialog(
     /** Hands the login over to the installed UAE PASS app (app-to-app flow). */
     private fun openUaePassApp(uri: Uri) {
         successUrl = uri.getQueryParameter("successurl")
-        val builder = Uri.parse(config.environment.appScheme + uri.authority + uri.path)
-            .buildUpon()
-        for (name in uri.queryParameterNames) {
-            if (name == "successurl" || name == "failureurl" || name == "closeondone") continue
-            uri.getQueryParameters(name).forEach { builder.appendQueryParameter(name, it) }
-        }
-        builder.appendQueryParameter("successurl", config.returnUrl(SUCCESS_HOST))
-        builder.appendQueryParameter("failureurl", config.returnUrl(FAILURE_HOST))
-        builder.appendQueryParameter("closeondone", "true")
+        // Same format as the official UAE PASS Android SDK: original query replaced by unencoded
+        // success/failure URLs. Do not add `closeondone=true` (iOS only): with it the Android UAE PASS
+        // app closes itself without opening the success URL, leaving the login stuck.
+        val appUrl = config.environment.appScheme + uri.encodedAuthority.orEmpty() + uri.encodedPath.orEmpty() +
+                "?successurl=" + config.returnUrl(SUCCESS_HOST) +
+                "&failureurl=" + config.returnUrl(FAILURE_HOST)
         try {
-            activity.startActivity(Intent(Intent.ACTION_VIEW, builder.build()))
+            activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(appUrl)))
         } catch (e: ActivityNotFoundException) {
             finish(null, "UAE PASS app is not installed.")
         }
