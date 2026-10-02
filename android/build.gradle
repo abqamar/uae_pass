@@ -1,73 +1,47 @@
-group 'com.mvpapps.uae_pass_flutter'
-version '1.0-SNAPSHOT'
+group = "com.mvpapps.uae_pass_flutter"
+version = "1.0-SNAPSHOT"
 
 buildscript {
-    ext.kotlin_version = '1.9.24'
+    ext.kotlin_version = "2.4.0"
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.0.2'
+        classpath "com.android.tools.build:gradle:9.1.0"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
-rootProject.allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        flatDir {
-            dirs project(':flutter_uae_pass').file('libs')
-        }
-    }
-}
+
 allprojects {
     repositories {
         google()
         mavenCentral()
-
     }
 }
 
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
+// Kotlin is compiled by AGP 9's built-in Kotlin support. With older AGP versions, or when the app
+// opts out via `android.builtInKotlin=false`, the Flutter Gradle plugin applies Kotlin Android.
+apply plugin: "com.android.library"
 
 android {
-    
-    namespace "com.mvpapps.uae_pass_flutter" 
+    namespace = "com.mvpapps.uae_pass_flutter"
 
-    compileSdkVersion 34
-
+    compileSdk = 37
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = '1.8'
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-        test.java.srcDirs += 'src/test/kotlin'
+        main.java.srcDirs += "src/main/kotlin"
+        test.java.srcDirs += "src/test/kotlin"
     }
 
     defaultConfig {
-        minSdkVersion 21
-    }
-
-    dependencies {
-//        implementation fileTree(dir: 'libs', include: ['*.aar'])
-        implementation(name: 'libraryuaepass', ext: 'aar')
-        implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-        implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-        implementation 'com.squareup.retrofit2:converter-scalars:2.9.0'
-        implementation 'com.google.code.gson:gson:2.8.6'
-        implementation 'com.loopj.android:android-async-http:1.4.9'
-        testImplementation 'org.jetbrains.kotlin:kotlin-test'
-        testImplementation 'org.mockito:mockito-core:5.0.0'
+        minSdk = 24
     }
 
     testOptions {
@@ -81,4 +55,15 @@ android {
             }
         }
     }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+    }
+}
+
+dependencies {
+    testImplementation "org.jetbrains.kotlin:kotlin-test"
+    testImplementation "org.mockito:mockito-core:5.0.0"
 }
