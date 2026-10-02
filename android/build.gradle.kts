@@ -2,15 +2,15 @@ group = "com.mvpapps.uae_pass_flutter"
 version = "1.0-SNAPSHOT"
 
 buildscript {
-    ext.kotlin_version = "2.4.0"
+    val kotlinVersion = "2.4.0"
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath "com.android.tools.build:gradle:9.1.0"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath("com.android.tools.build:gradle:9.1.0")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
 }
 
@@ -23,7 +23,9 @@ allprojects {
 
 // Kotlin is compiled by AGP 9's built-in Kotlin support. With older AGP versions, or when the app
 // opts out via `android.builtInKotlin=false`, the Flutter Gradle plugin applies Kotlin Android.
-apply plugin: "com.android.library"
+plugins {
+    id("com.android.library")
+}
 
 android {
     namespace = "com.mvpapps.uae_pass_flutter"
@@ -36,8 +38,12 @@ android {
     }
 
     sourceSets {
-        main.java.srcDirs += "src/main/kotlin"
-        test.java.srcDirs += "src/test/kotlin"
+        getByName("main") {
+            java.srcDirs("src/main/kotlin")
+        }
+        getByName("test") {
+            java.srcDirs("src/test/kotlin")
+        }
     }
 
     defaultConfig {
@@ -45,13 +51,16 @@ android {
     }
 
     testOptions {
-        unitTests.all {
-            useJUnitPlatform()
+        unitTests {
+            all {
+                it.useJUnitPlatform()
 
-            testLogging {
-               events "passed", "skipped", "failed", "standardOut", "standardError"
-               outputs.upToDateWhen {false}
-               showStandardStreams = true
+                it.outputs.upToDateWhen { false }
+
+                it.testLogging {
+                    events("passed", "skipped", "failed", "standardOut", "standardError")
+                    showStandardStreams = true
+                }
             }
         }
     }
@@ -64,6 +73,6 @@ kotlin {
 }
 
 dependencies {
-    testImplementation "org.jetbrains.kotlin:kotlin-test"
-    testImplementation "org.mockito:mockito-core:5.0.0"
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
+    testImplementation("org.mockito:mockito-core:5.0.0")
 }
